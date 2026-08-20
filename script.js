@@ -1,13 +1,16 @@
-// ==========================================
-// ADDA 007 — FIREBASE LIVE CHAT
-// ==========================================
+// ======================================================
+// ADDA 007 - REAL TIME LIVE CHAT
+// Firebase Realtime Database
+// ======================================================
 
-// Firebase App
+
+// ======================================================
+// FIREBASE IMPORT
+// ======================================================
+
 import { initializeApp } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-
-// Firebase Realtime Database
 import {
     getDatabase,
     ref,
@@ -17,54 +20,58 @@ import {
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 
-// ==========================================
+// ======================================================
 // FIREBASE CONFIG
-// ==========================================
+// ======================================================
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyA-6kplwDGeSPOutALTFEegnRGB3rl-WcE",
+    apiKey:
+        "AIzaSyA-6kplwDGeSPOutALTFEegnRGB3rl-WcE",
 
-    authDomain: "adda-007.firebaseapp.com",
+    authDomain:
+        "adda-007.firebaseapp.com",
 
     databaseURL:
         "https://adda-007-default-rtdb.firebaseio.com",
 
-    projectId: "adda-007",
+    projectId:
+        "adda-007",
 
     storageBucket:
         "adda-007.firebasestorage.app",
 
-    messagingSenderId: "258004128866",
+    messagingSenderId:
+        "258004128866",
 
     appId:
         "1:258004128866:web:a1a53d98e81b958c40ed3b",
 
-    measurementId: "G-DYPWLY5NS0"
+    measurementId:
+        "G-DYPWLY5NS0"
 };
 
 
-// ==========================================
-// INITIALIZE FIREBASE
-// ==========================================
+// ======================================================
+// START FIREBASE
+// ======================================================
 
 const app = initializeApp(firebaseConfig);
-
-
-// Connect Realtime Database
 
 const database = getDatabase(app);
 
 
-// ADDA 007 messages database
+// ======================================================
+// DATABASE LOCATION
+// ======================================================
 
 const messagesRef =
     ref(database, "adda007Messages");
 
 
-// ==========================================
-// HTML ELEMENTS
-// ==========================================
+// ======================================================
+// GET HTML ELEMENTS
+// ======================================================
 
 const loginScreen =
     document.getElementById("loginScreen");
@@ -91,41 +98,89 @@ const logoutBtn =
     document.getElementById("logoutBtn");
 
 
-// ==========================================
-// USERNAME
-// ==========================================
+// ======================================================
+// USER DATA
+// ======================================================
 
 let username =
     localStorage.getItem("adda007Username");
 
 
-// যদি আগে নাম দেওয়া থাকে
+// ======================================================
+// PAGE START
+// ======================================================
 
 if (username) {
 
-    startChat();
+    showChat();
 
 }
 
 
-// ==========================================
-// JOIN ADDA 007
-// ==========================================
+// ======================================================
+// JOIN BUTTON
+// ======================================================
 
-joinBtn.addEventListener("click", () => {
+joinBtn.addEventListener("click", joinChat);
+
+
+// ======================================================
+// ENTER TO JOIN
+// ======================================================
+
+usernameInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            joinChat();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// JOIN FUNCTION
+// ======================================================
+
+function joinChat() {
 
     const name =
         usernameInput.value.trim();
 
 
+    // Empty name
+
     if (!name) {
 
-        alert("আগে তোমার নাম লিখো 😤");
+        alert("তোমার নাম লিখো 😤");
+
+        usernameInput.focus();
 
         return;
 
     }
 
+
+    // Name too short
+
+    if (name.length < 2) {
+
+        alert("কমপক্ষে ২ অক্ষরের নাম দাও!");
+
+        usernameInput.focus();
+
+        return;
+
+    }
+
+
+    // Save username
 
     username = name;
 
@@ -136,105 +191,35 @@ joinBtn.addEventListener("click", () => {
     );
 
 
-    startChat();
+    // Open chat
 
-});
+    showChat();
 
-
-// Enter দিয়ে Join
-
-usernameInput.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (event.key === "Enter") {
-
-            joinBtn.click();
-
-        }
-
-    }
-);
+}
 
 
-// ==========================================
-// START CHAT
-// ==========================================
+// ======================================================
+// SHOW CHAT
+// ======================================================
 
-function startChat() {
+function showChat() {
 
     loginScreen.style.display = "none";
 
     chatApp.style.display = "flex";
 
-    messageInput.focus();
+    setTimeout(function() {
+
+        messageInput.focus();
+
+    }, 100);
 
 }
 
 
-// ==========================================
-// SEND MESSAGE
-// ==========================================
-
-function sendMessage() {
-
-    const text =
-        messageInput.value.trim();
-
-
-    if (!text) return;
-
-
-    const messageData = {
-
-        username: username,
-
-        text: text,
-
-        time: new Date().toLocaleTimeString(
-            "en-BD",
-            {
-                hour: "2-digit",
-                minute: "2-digit"
-            }
-        ),
-
-        timestamp: Date.now()
-
-    };
-
-
-    // Firebase database-এ message পাঠানো
-
-    push(
-        messagesRef,
-        messageData
-    )
-    .then(() => {
-
-        console.log("Message sent!");
-
-    })
-    .catch((error) => {
-
-        console.error(
-            "Message send error:",
-            error
-        );
-
-        alert(
-            "Message পাঠানো যাচ্ছে না! Firebase Database Rules check করো."
-        );
-
-    });
-
-
-    messageInput.value = "";
-
-}
-
-
-// Send button
+// ======================================================
+// SEND BUTTON
+// ======================================================
 
 sendBtn.addEventListener(
     "click",
@@ -242,11 +227,13 @@ sendBtn.addEventListener(
 );
 
 
-// Enter দিয়ে message send
+// ======================================================
+// ENTER TO SEND
+// ======================================================
 
 messageInput.addEventListener(
     "keydown",
-    (event) => {
+    function(event) {
 
         if (event.key === "Enter") {
 
@@ -260,19 +247,124 @@ messageInput.addEventListener(
 );
 
 
-// ==========================================
-// RECEIVE LIVE MESSAGES
-// ==========================================
+// ======================================================
+// SEND MESSAGE
+// ======================================================
+
+function sendMessage() {
+
+    const text =
+        messageInput.value.trim();
+
+
+    // Empty message
+
+    if (!text) {
+
+        return;
+
+    }
+
+
+    // Username check
+
+    if (!username) {
+
+        alert("আগে ADDA-তে Join করো!");
+
+        return;
+
+    }
+
+
+    // Message object
+
+    const messageData = {
+
+        username: username,
+
+        text: text,
+
+        timestamp: Date.now(),
+
+        time: new Date().toLocaleTimeString(
+            "en-BD",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        )
+
+    };
+
+
+    // Disable temporarily
+
+    sendBtn.disabled = true;
+
+
+    // Firebase push
+
+    push(
+        messagesRef,
+        messageData
+    )
+    .then(function() {
+
+        console.log(
+            "ADDA 007: Message sent successfully"
+        );
+
+        messageInput.value = "";
+
+        messageInput.focus();
+
+    })
+    .catch(function(error) {
+
+        console.error(
+            "Firebase error:",
+            error
+        );
+
+
+        alert(
+            "Message পাঠানো যায়নি!\n\n" +
+            "Firebase Database Rules check করো."
+        );
+
+    })
+    .finally(function() {
+
+        sendBtn.disabled = false;
+
+    });
+
+}
+
+
+// ======================================================
+// RECEIVE REAL-TIME MESSAGES
+// ======================================================
 
 onChildAdded(
     messagesRef,
-    (snapshot) => {
+    function(snapshot) {
 
         const data =
             snapshot.val();
 
 
-        // Welcome message remove
+        // Invalid data protection
+
+        if (!data) {
+
+            return;
+
+        }
+
+
+        // Remove welcome message
 
         const welcome =
             document.querySelector(
@@ -287,109 +379,120 @@ onChildAdded(
         }
 
 
-        // Message container
+        // Create message container
 
-        const messageDiv =
+        const messageElement =
             document.createElement("div");
 
 
-        // নিজের message
+        // Own / Other message
 
         if (
             data.username === username
         ) {
 
-            messageDiv.classList.add(
-                "message",
-                "me"
-            );
+            messageElement.className =
+                "message me";
 
-        }
+        } else {
 
-        // অন্যের message
-
-        else {
-
-            messageDiv.classList.add(
-                "message",
-                "other"
-            );
+            messageElement.className =
+                "message other";
 
         }
 
 
-        // Username
+        // ==================================================
+        // USERNAME
+        // ==================================================
 
-        const nameDiv =
+        const nameElement =
             document.createElement("div");
 
-        nameDiv.className =
+        nameElement.className =
             "message-name";
 
-        nameDiv.textContent =
-            data.username;
+        nameElement.textContent =
+            data.username || "Unknown";
 
 
-        // Message
+        // ==================================================
+        // MESSAGE TEXT
+        // ==================================================
 
-        const textDiv =
+        const textElement =
             document.createElement("div");
 
-        textDiv.className =
+        textElement.className =
             "message-text";
 
-        textDiv.textContent =
-            data.text;
+        textElement.textContent =
+            data.text || "";
 
 
-        // Time
+        // ==================================================
+        // TIME
+        // ==================================================
 
-        const timeDiv =
+        const timeElement =
             document.createElement("div");
 
-        timeDiv.className =
+        timeElement.className =
             "message-time";
 
-        timeDiv.textContent =
-            data.time;
+        timeElement.textContent =
+            data.time || "";
 
 
-        // Add everything
+        // ==================================================
+        // ADD TO MESSAGE
+        // ==================================================
 
-        messageDiv.appendChild(
-            nameDiv
+        messageElement.appendChild(
+            nameElement
         );
 
-        messageDiv.appendChild(
-            textDiv
+        messageElement.appendChild(
+            textElement
         );
 
-        messageDiv.appendChild(
-            timeDiv
+        messageElement.appendChild(
+            timeElement
         );
 
+
+        // Add to screen
 
         messages.appendChild(
-            messageDiv
+            messageElement
         );
 
 
-        // নিচে scroll
+        // Scroll to bottom
 
         messages.scrollTop =
             messages.scrollHeight;
+
+    },
+
+    function(error) {
+
+        console.error(
+            "Firebase read error:",
+            error
+        );
 
     }
 );
 
 
-// ==========================================
+// ======================================================
 // LOGOUT
-// ==========================================
+// ======================================================
 
 logoutBtn.addEventListener(
     "click",
-    () => {
+    function() {
 
         localStorage.removeItem(
             "adda007Username"
@@ -399,15 +502,40 @@ logoutBtn.addEventListener(
         username = null;
 
 
+        // Hide chat
+
         chatApp.style.display =
             "none";
 
+
+        // Show login
 
         loginScreen.style.display =
             "flex";
 
 
+        // Clear input
+
         usernameInput.value = "";
 
+        messageInput.value = "";
+
+
+        usernameInput.focus();
+
     }
+);
+
+
+// ======================================================
+// FIREBASE CONNECTION TEST
+// ======================================================
+
+console.log(
+    "🔥 ADDA 007 Firebase initialized successfully!"
+);
+
+console.log(
+    "📡 Database:",
+    "adda007Messages"
 );
