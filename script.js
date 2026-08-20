@@ -1,60 +1,70 @@
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+// ==========================================
+// ADDA 007 — FIREBASE LIVE CHAT
+// ==========================================
 
+// Firebase App
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+// Firebase Realtime Database
 import {
     getDatabase,
     ref,
     push,
     onChildAdded
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 
-// ===============================
+// ==========================================
 // FIREBASE CONFIG
-// নিজের Firebase Config বসাও
-// ===============================
+// ==========================================
 
 const firebaseConfig = {
 
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyA-6kplwDGeSPOutALTFEegnRGB3rl-WcE",
 
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    authDomain: "adda-007.firebaseapp.com",
 
     databaseURL:
-        "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+        "https://adda-007-default-rtdb.firebaseio.com",
 
-    projectId: "YOUR_PROJECT",
+    projectId: "adda-007",
 
     storageBucket:
-        "YOUR_PROJECT.appspot.com",
+        "adda-007.firebasestorage.app",
 
-    messagingSenderId:
-        "YOUR_SENDER_ID",
+    messagingSenderId: "258004128866",
 
-    appId: "YOUR_APP_ID"
+    appId:
+        "1:258004128866:web:a1a53d98e81b958c40ed3b",
 
+    measurementId: "G-DYPWLY5NS0"
 };
 
 
-// ===============================
+// ==========================================
 // INITIALIZE FIREBASE
-// ===============================
+// ==========================================
 
 const app = initializeApp(firebaseConfig);
+
+
+// Connect Realtime Database
 
 const database = getDatabase(app);
 
 
-// ADDA 007 DATABASE
+// ADDA 007 messages database
 
 const messagesRef =
     ref(database, "adda007Messages");
 
 
-// ===============================
-// ELEMENTS
-// ===============================
+// ==========================================
+// HTML ELEMENTS
+// ==========================================
 
 const loginScreen =
     document.getElementById("loginScreen");
@@ -81,15 +91,15 @@ const logoutBtn =
     document.getElementById("logoutBtn");
 
 
-// ===============================
+// ==========================================
 // USERNAME
-// ===============================
+// ==========================================
 
 let username =
     localStorage.getItem("adda007Username");
 
 
-// আগে login করা থাকলে
+// যদি আগে নাম দেওয়া থাকে
 
 if (username) {
 
@@ -98,14 +108,15 @@ if (username) {
 }
 
 
-// ===============================
+// ==========================================
 // JOIN ADDA 007
-// ===============================
+// ==========================================
 
 joinBtn.addEventListener("click", () => {
 
     const name =
         usernameInput.value.trim();
+
 
     if (!name) {
 
@@ -114,6 +125,7 @@ joinBtn.addEventListener("click", () => {
         return;
 
     }
+
 
     username = name;
 
@@ -129,8 +141,10 @@ joinBtn.addEventListener("click", () => {
 });
 
 
+// Enter দিয়ে Join
+
 usernameInput.addEventListener(
-    "keypress",
+    "keydown",
     (event) => {
 
         if (event.key === "Enter") {
@@ -143,29 +157,30 @@ usernameInput.addEventListener(
 );
 
 
-// ===============================
+// ==========================================
 // START CHAT
-// ===============================
+// ==========================================
 
 function startChat() {
 
-    loginScreen.style.display =
-        "none";
+    loginScreen.style.display = "none";
 
-    chatApp.style.display =
-        "flex";
+    chatApp.style.display = "flex";
+
+    messageInput.focus();
 
 }
 
 
-// ===============================
+// ==========================================
 // SEND MESSAGE
-// ===============================
+// ==========================================
 
 function sendMessage() {
 
     const text =
         messageInput.value.trim();
+
 
     if (!text) return;
 
@@ -177,7 +192,7 @@ function sendMessage() {
         text: text,
 
         time: new Date().toLocaleTimeString(
-            [],
+            "en-BD",
             {
                 hour: "2-digit",
                 minute: "2-digit"
@@ -189,10 +204,29 @@ function sendMessage() {
     };
 
 
+    // Firebase database-এ message পাঠানো
+
     push(
         messagesRef,
         messageData
-    );
+    )
+    .then(() => {
+
+        console.log("Message sent!");
+
+    })
+    .catch((error) => {
+
+        console.error(
+            "Message send error:",
+            error
+        );
+
+        alert(
+            "Message পাঠানো যাচ্ছে না! Firebase Database Rules check করো."
+        );
+
+    });
 
 
     messageInput.value = "";
@@ -200,7 +234,7 @@ function sendMessage() {
 }
 
 
-// SEND BUTTON
+// Send button
 
 sendBtn.addEventListener(
     "click",
@@ -208,13 +242,15 @@ sendBtn.addEventListener(
 );
 
 
-// ENTER TO SEND
+// Enter দিয়ে message send
 
 messageInput.addEventListener(
-    "keypress",
+    "keydown",
     (event) => {
 
         if (event.key === "Enter") {
+
+            event.preventDefault();
 
             sendMessage();
 
@@ -224,27 +260,25 @@ messageInput.addEventListener(
 );
 
 
-// ===============================
-// RECEIVE LIVE MESSAGE
-// ===============================
+// ==========================================
+// RECEIVE LIVE MESSAGES
+// ==========================================
 
 onChildAdded(
-
     messagesRef,
-
     (snapshot) => {
 
         const data =
             snapshot.val();
 
 
+        // Welcome message remove
+
         const welcome =
             document.querySelector(
                 ".welcome-message"
             );
 
-
-        // প্রথম message আসলে welcome remove
 
         if (welcome) {
 
@@ -253,9 +287,13 @@ onChildAdded(
         }
 
 
+        // Message container
+
         const messageDiv =
             document.createElement("div");
 
+
+        // নিজের message
 
         if (
             data.username === username
@@ -266,7 +304,11 @@ onChildAdded(
                 "me"
             );
 
-        } else {
+        }
+
+        // অন্যের message
+
+        else {
 
             messageDiv.classList.add(
                 "message",
@@ -275,6 +317,8 @@ onChildAdded(
 
         }
 
+
+        // Username
 
         const nameDiv =
             document.createElement("div");
@@ -286,6 +330,8 @@ onChildAdded(
             data.username;
 
 
+        // Message
+
         const textDiv =
             document.createElement("div");
 
@@ -295,6 +341,8 @@ onChildAdded(
         textDiv.textContent =
             data.text;
 
+
+        // Time
 
         const timeDiv =
             document.createElement("div");
@@ -306,27 +354,38 @@ onChildAdded(
             data.time;
 
 
-        messageDiv.appendChild(nameDiv);
+        // Add everything
 
-        messageDiv.appendChild(textDiv);
+        messageDiv.appendChild(
+            nameDiv
+        );
 
-        messageDiv.appendChild(timeDiv);
+        messageDiv.appendChild(
+            textDiv
+        );
+
+        messageDiv.appendChild(
+            timeDiv
+        );
 
 
-        messages.appendChild(messageDiv);
+        messages.appendChild(
+            messageDiv
+        );
 
+
+        // নিচে scroll
 
         messages.scrollTop =
             messages.scrollHeight;
 
     }
-
 );
 
 
-// ===============================
+// ==========================================
 // LOGOUT
-// ===============================
+// ==========================================
 
 logoutBtn.addEventListener(
     "click",
