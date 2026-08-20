@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ADDA 007 💬</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+
+        <div class="login-box">
+
+            <div class="logo">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+
+            <h1>ADDA 007</h1>
+
+            <p>বন্ধুদের সাথে আড্ডা দাও 😎🔥</p>
+
+            <input
+                type="text"
+                id="usernameInput"
+                placeholder="তোমার নাম লিখো..."
+                maxlength="20"
+            >
+
+            <button id="joinBtn">
+                ADDA-তে JOIN করো 🚀
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHAT APP -->
+    <div class="chat-app" id="chatApp">
+
+        <header>
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    007
+                </div>
+
+                <div>
+                    <h2>ADDA 007</h2>
+
+                    <span>
+                        <span class="online-dot"></span>
+                        LIVE ADDA
+                    </span>
+                </div>
+
+            </div>
+
+
+            <button id="logoutBtn" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+
+        </header>
+
+
+        <!-- MESSAGES -->
+        <main id="messages">
+
+            <div class="welcome-message">
+
+                <div class="welcome-icon">
+                    🎉
+                </div>
+
+                <h2>Welcome to ADDA 007!</h2>
+
+                <p>
+                    বন্ধুদের সাথে আড্ডা শুরু করো 😎🔥
+                </p>
+
+            </div>
+
+        </main>
+
+
+        <!-- MESSAGE INPUT -->
+        <div class="chat-input">
+
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="ADDA 007-এ message লিখো..."
+                autocomplete="off"
+                maxlength="500"
+            >
+
+            <button id="sendBtn" title="Send Message">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
