@@ -1,140 +1,178 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ADDA 007 💬</title>
+    <title>ADDA 007</title>
 
     <link rel="stylesheet" href="style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- ============================= -->
-    <!-- LOGIN -->
-    <!-- ============================= -->
+    <!-- ================= LOGIN ================= -->
 
-    <section id="loginScreen" class="login-screen">
+    <div id="loginScreen" class="login-screen">
 
         <div class="login-card">
 
-            <div class="logo">
+            <div class="login-logo">
                 💬
             </div>
 
             <h1>ADDA 007</h1>
 
-            <p>বন্ধুদের সাথে আড্ডা দাও 😎🔥</p>
+            <p>
+                Friends. Messages. Adda.
+            </p>
 
             <input
                 id="usernameInput"
                 type="text"
                 maxlength="20"
-                placeholder="তোমার নাম লিখো..."
+                placeholder="Enter your name"
                 autocomplete="off"
             >
 
             <button id="joinBtn">
-                JOIN ADDA 🚀
+                Enter Adda
             </button>
 
         </div>
 
-    </section>
+    </div>
 
 
-    <!-- ============================= -->
-    <!-- CHAT APP -->
-    <!-- ============================= -->
+    <!-- ================= CHAT APP ================= -->
 
-    <section id="chatApp" class="chat-app">
+    <div id="chatApp" class="chat-app">
 
         <!-- HEADER -->
 
         <header class="chat-header">
 
-            <div class="brand">
+            <div class="profile-section">
 
-                <div class="brand-logo">
-                    007
+                <div class="avatar">
+                    A7
                 </div>
 
-                <div class="brand-info">
+                <div class="profile-info">
 
-                    <h2>ADDA 007</h2>
+                    <div class="chat-title">
+                        ADDA 007
+                    </div>
 
-                    <span>
-                        <i></i>
-                        LIVE CHAT
-                    </span>
+                    <div class="chat-status">
+                        <span class="status-dot"></span>
+                        online
+                    </div>
 
                 </div>
 
             </div>
 
-            <button
-                id="logoutBtn"
-                class="logout-btn"
-                title="Logout"
-            >
-                ⇥
-            </button>
+
+            <div class="header-actions">
+
+                <button
+                    id="searchBtn"
+                    title="Search"
+                >
+                    🔍
+                </button>
+
+                <button
+                    id="logoutBtn"
+                    title="Logout"
+                >
+                    ⋮
+                </button>
+
+            </div>
 
         </header>
 
 
-        <!-- ONLINE BAR -->
+        <!-- SEARCH -->
 
-        <div class="online-bar">
+        <div id="searchBox" class="search-box hidden">
 
-            <span class="online-circle"></span>
-
-            <span>ADDA 007 is live</span>
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search messages..."
+            >
 
         </div>
 
 
-        <!-- MESSAGES -->
+        <!-- CHAT -->
 
         <main id="messages" class="messages">
 
-            <div class="welcome-message">
+            <div class="welcome-card">
 
                 <div class="welcome-icon">
-                    🎉
+                    🔥
                 </div>
 
                 <h2>Welcome to ADDA 007</h2>
 
                 <p>
-                    বন্ধুদের সাথে গল্প শুরু করো!
+                    The group chat is ready.
                 </p>
+
+                <small>
+                    Messages are synced in real-time.
+                </small>
 
             </div>
 
         </main>
 
 
-        <!-- TYPING AREA -->
+        <!-- TYPING INDICATOR -->
 
-        <footer class="chat-input-area">
+        <div
+            id="typingIndicator"
+            class="typing-indicator hidden"
+        >
+            Someone is typing...
+        </div>
+
+
+        <!-- INPUT -->
+
+        <footer class="message-area">
+
+            <button
+                id="emojiBtn"
+                class="input-action"
+                title="Emoji"
+            >
+                😊
+            </button>
+
 
             <input
                 id="messageInput"
                 type="text"
                 maxlength="500"
-                placeholder="Message লিখো..."
+                placeholder="Type a message"
                 autocomplete="off"
             >
 
+
             <button
                 id="sendBtn"
+                class="send-btn"
                 title="Send"
             >
                 ➤
@@ -142,14 +180,46 @@
 
         </footer>
 
-    </section>
+    </div>
 
 
-    <!-- ============================= -->
-    <!-- FIREBASE / APP JS -->
-    <!-- ============================= -->
+    <!-- EMOJI PANEL -->
 
-    <script type="module" src="./script.js"></script>
+    <div
+        id="emojiPanel"
+        class="emoji-panel hidden"
+    >
+
+        <button>😀</button>
+        <button>😂</button>
+        <button>🤣</button>
+        <button>😍</button>
+        <button>🥰</button>
+        <button>😎</button>
+        <button>😭</button>
+        <button>😡</button>
+        <button>🤔</button>
+        <button>😱</button>
+        <button>🔥</button>
+        <button>❤️</button>
+        <button>💀</button>
+        <button>👍</button>
+        <button>👎</button>
+        <button>🎉</button>
+        <button>🚀</button>
+        <button>💯</button>
+        <button>😂</button>
+        <button>😈</button>
+
+    </div>
+
+
+    <!-- FIREBASE -->
+
+    <script
+        type="module"
+        src="./script.js">
+    </script>
 
 </body>
 </html>
