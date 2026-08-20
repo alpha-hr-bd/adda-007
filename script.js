@@ -1,11 +1,11 @@
 // ======================================================
-// ADDA 007 - REAL TIME LIVE CHAT
-// Firebase Realtime Database
+// ADDA 007
+// WhatsApp-inspired Firebase Real-Time Chat
 // ======================================================
 
 
 // ======================================================
-// FIREBASE IMPORT
+// FIREBASE IMPORTS
 // ======================================================
 
 import { initializeApp } from
@@ -15,6 +15,8 @@ import {
     getDatabase,
     ref,
     push,
+    query,
+    limitToLast,
     onChildAdded
 } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -53,80 +55,137 @@ const firebaseConfig = {
 
 
 // ======================================================
-// START FIREBASE
+// FIREBASE INITIALIZE
 // ======================================================
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const database = getDatabase(app);
+const database =
+    getDatabase(app);
 
 
 // ======================================================
-// DATABASE LOCATION
+// DATABASE
 // ======================================================
 
 const messagesRef =
-    ref(database, "adda007Messages");
+    ref(
+        database,
+        "adda007Messages"
+    );
+
+
+// Only load latest 50 messages.
+// This keeps the chat faster.
+
+const latestMessagesQuery =
+    query(
+        messagesRef,
+        limitToLast(50)
+    );
 
 
 // ======================================================
-// GET HTML ELEMENTS
+// ELEMENTS
 // ======================================================
 
 const loginScreen =
-    document.getElementById("loginScreen");
+    document.getElementById(
+        "loginScreen"
+    );
 
 const chatApp =
-    document.getElementById("chatApp");
+    document.getElementById(
+        "chatApp"
+    );
 
 const usernameInput =
-    document.getElementById("usernameInput");
+    document.getElementById(
+        "usernameInput"
+    );
 
 const joinBtn =
-    document.getElementById("joinBtn");
+    document.getElementById(
+        "joinBtn"
+    );
 
 const messageInput =
-    document.getElementById("messageInput");
+    document.getElementById(
+        "messageInput"
+    );
 
 const sendBtn =
-    document.getElementById("sendBtn");
+    document.getElementById(
+        "sendBtn"
+    );
 
 const messages =
-    document.getElementById("messages");
+    document.getElementById(
+        "messages"
+    );
 
 const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+        "logoutBtn"
+    );
+
+const searchBtn =
+    document.getElementById(
+        "searchBtn"
+    );
+
+const searchBox =
+    document.getElementById(
+        "searchBox"
+    );
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
+
+const emojiBtn =
+    document.getElementById(
+        "emojiBtn"
+    );
+
+const emojiPanel =
+    document.getElementById(
+        "emojiPanel"
+    );
 
 
 // ======================================================
-// USER DATA
+// USERNAME
 // ======================================================
 
 let username =
-    localStorage.getItem("adda007Username");
+    localStorage.getItem(
+        "adda007Username"
+    );
 
 
 // ======================================================
-// PAGE START
+// LOGIN
 // ======================================================
 
 if (username) {
 
-    showChat();
+    openChat();
 
 }
 
 
-// ======================================================
-// JOIN BUTTON
-// ======================================================
+// Join
 
-joinBtn.addEventListener("click", joinChat);
+joinBtn.addEventListener(
+    "click",
+    joinChat
+);
 
 
-// ======================================================
-// ENTER TO JOIN
-// ======================================================
+// Enter
 
 usernameInput.addEventListener(
     "keydown",
@@ -145,7 +204,7 @@ usernameInput.addEventListener(
 
 
 // ======================================================
-// JOIN FUNCTION
+// JOIN CHAT
 // ======================================================
 
 function joinChat() {
@@ -154,35 +213,30 @@ function joinChat() {
         usernameInput.value.trim();
 
 
-    // Empty name
-
     if (!name) {
 
-        alert("তোমার নাম লিখো 😤");
-
-        usernameInput.focus();
+        alert(
+            "Enter your name first."
+        );
 
         return;
 
     }
 
-
-    // Name too short
 
     if (name.length < 2) {
 
-        alert("কমপক্ষে ২ অক্ষরের নাম দাও!");
-
-        usernameInput.focus();
+        alert(
+            "Name must be at least 2 characters."
+        );
 
         return;
 
     }
 
 
-    // Save username
-
-    username = name;
+    username =
+        name.substring(0, 20);
 
 
     localStorage.setItem(
@@ -191,34 +245,37 @@ function joinChat() {
     );
 
 
-    // Open chat
-
-    showChat();
+    openChat();
 
 }
 
 
 // ======================================================
-// SHOW CHAT
+// OPEN CHAT
 // ======================================================
 
-function showChat() {
+function openChat() {
 
-    loginScreen.style.display = "none";
+    loginScreen.style.display =
+        "none";
 
-    chatApp.style.display = "flex";
+    chatApp.style.display =
+        "flex";
 
-    setTimeout(function() {
+    setTimeout(
+        function() {
 
-        messageInput.focus();
+            messageInput.focus();
 
-    }, 100);
+        },
+        100
+    );
 
 }
 
 
 // ======================================================
-// SEND BUTTON
+// SEND MESSAGE
 // ======================================================
 
 sendBtn.addEventListener(
@@ -227,15 +284,14 @@ sendBtn.addEventListener(
 );
 
 
-// ======================================================
-// ENTER TO SEND
-// ======================================================
-
 messageInput.addEventListener(
     "keydown",
     function(event) {
 
-        if (event.key === "Enter") {
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
 
             event.preventDefault();
 
@@ -248,16 +304,14 @@ messageInput.addEventListener(
 
 
 // ======================================================
-// SEND MESSAGE
+// SEND FUNCTION
 // ======================================================
 
-function sendMessage() {
+async function sendMessage() {
 
     const text =
         messageInput.value.trim();
 
-
-    // Empty message
 
     if (!text) {
 
@@ -266,96 +320,99 @@ function sendMessage() {
     }
 
 
-    // Username check
-
     if (!username) {
 
-        alert("আগে ADDA-তে Join করো!");
+        alert(
+            "Please join ADDA 007 first."
+        );
 
         return;
 
     }
 
 
-    // Message object
+    // Prevent double clicks
 
-    const messageData = {
+    if (sendBtn.disabled) {
 
-        username: username,
+        return;
 
-        text: text,
+    }
 
-        timestamp: Date.now(),
-
-        time: new Date().toLocaleTimeString(
-            "en-BD",
-            {
-                hour: "2-digit",
-                minute: "2-digit"
-            }
-        )
-
-    };
-
-
-    // Disable temporarily
 
     sendBtn.disabled = true;
 
 
-    // Firebase push
+    const messageData = {
 
-    push(
-        messagesRef,
-        messageData
-    )
-    .then(function() {
+        username:
+            username,
 
-        console.log(
-            "ADDA 007: Message sent successfully"
+        text:
+            text.substring(0, 500),
+
+        timestamp:
+            Date.now(),
+
+        time:
+            new Date().toLocaleTimeString(
+                "en-BD",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            )
+
+    };
+
+
+    try {
+
+        await push(
+            messagesRef,
+            messageData
         );
+
 
         messageInput.value = "";
 
         messageInput.focus();
 
-    })
-    .catch(function(error) {
+    }
+
+    catch (error) {
 
         console.error(
-            "Firebase error:",
+            "Firebase send error:",
             error
         );
 
-
         alert(
-            "Message পাঠানো যায়নি!\n\n" +
-            "Firebase Database Rules check করো."
+            "Message send failed. Check Firebase Database Rules."
         );
 
-    })
-    .finally(function() {
+    }
+
+    finally {
 
         sendBtn.disabled = false;
 
-    });
+    }
 
 }
 
 
 // ======================================================
-// RECEIVE REAL-TIME MESSAGES
+// RECEIVE MESSAGES
 // ======================================================
 
 onChildAdded(
-    messagesRef,
+    latestMessagesQuery,
     function(snapshot) {
 
         const data =
             snapshot.val();
 
-
-        // Invalid data protection
 
         if (!data) {
 
@@ -364,11 +421,11 @@ onChildAdded(
         }
 
 
-        // Remove welcome message
+        // Remove welcome
 
         const welcome =
             document.querySelector(
-                ".welcome-message"
+                ".welcome-card"
             );
 
 
@@ -379,99 +436,9 @@ onChildAdded(
         }
 
 
-        // Create message container
-
-        const messageElement =
-            document.createElement("div");
-
-
-        // Own / Other message
-
-        if (
-            data.username === username
-        ) {
-
-            messageElement.className =
-                "message me";
-
-        } else {
-
-            messageElement.className =
-                "message other";
-
-        }
-
-
-        // ==================================================
-        // USERNAME
-        // ==================================================
-
-        const nameElement =
-            document.createElement("div");
-
-        nameElement.className =
-            "message-name";
-
-        nameElement.textContent =
-            data.username || "Unknown";
-
-
-        // ==================================================
-        // MESSAGE TEXT
-        // ==================================================
-
-        const textElement =
-            document.createElement("div");
-
-        textElement.className =
-            "message-text";
-
-        textElement.textContent =
-            data.text || "";
-
-
-        // ==================================================
-        // TIME
-        // ==================================================
-
-        const timeElement =
-            document.createElement("div");
-
-        timeElement.className =
-            "message-time";
-
-        timeElement.textContent =
-            data.time || "";
-
-
-        // ==================================================
-        // ADD TO MESSAGE
-        // ==================================================
-
-        messageElement.appendChild(
-            nameElement
+        createMessage(
+            data
         );
-
-        messageElement.appendChild(
-            textElement
-        );
-
-        messageElement.appendChild(
-            timeElement
-        );
-
-
-        // Add to screen
-
-        messages.appendChild(
-            messageElement
-        );
-
-
-        // Scroll to bottom
-
-        messages.scrollTop =
-            messages.scrollHeight;
 
     },
 
@@ -487,12 +454,274 @@ onChildAdded(
 
 
 // ======================================================
+// CREATE MESSAGE
+// ======================================================
+
+function createMessage(data) {
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+
+    if (
+        data.username === username
+    ) {
+
+        message.className =
+            "message me";
+
+    }
+
+    else {
+
+        message.className =
+            "message other";
+
+    }
+
+
+    // Username
+
+    const name =
+        document.createElement(
+            "div"
+        );
+
+    name.className =
+        "message-name";
+
+    name.textContent =
+        data.username || "Unknown";
+
+
+    // Text
+
+    const text =
+        document.createElement(
+            "div"
+        );
+
+    text.className =
+        "message-text";
+
+    text.textContent =
+        data.text || "";
+
+
+    // Time
+
+    const time =
+        document.createElement(
+            "span"
+        );
+
+    time.className =
+        "message-time";
+
+    time.textContent =
+        data.time || "";
+
+
+    // Build
+
+    message.appendChild(
+        name
+    );
+
+    message.appendChild(
+        text
+    );
+
+    message.appendChild(
+        time
+    );
+
+
+    messages.appendChild(
+        message
+    );
+
+
+    // Scroll
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+
+// ======================================================
+// SEARCH
+// ======================================================
+
+searchBtn.addEventListener(
+    "click",
+    function() {
+
+        searchBox.classList.toggle(
+            "hidden"
+        );
+
+
+        if (
+            !searchBox.classList.contains(
+                "hidden"
+            )
+        ) {
+
+            searchInput.focus();
+
+        }
+
+    }
+);
+
+
+searchInput.addEventListener(
+    "input",
+    function() {
+
+        const keyword =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        const allMessages =
+            document.querySelectorAll(
+                ".message"
+            );
+
+
+        allMessages.forEach(
+            function(message) {
+
+                const text =
+                    message.textContent
+                        .toLowerCase();
+
+
+                if (
+                    keyword &&
+                    text.includes(keyword)
+                ) {
+
+                    message.classList.add(
+                        "message-highlight"
+                    );
+
+                }
+
+                else {
+
+                    message.classList.remove(
+                        "message-highlight"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+// ======================================================
+// EMOJI PANEL
+// ======================================================
+
+emojiBtn.addEventListener(
+    "click",
+    function(event) {
+
+        event.stopPropagation();
+
+        emojiPanel.classList.toggle(
+            "hidden"
+        );
+
+    }
+);
+
+
+// Emoji buttons
+
+const emojiButtons =
+    emojiPanel.querySelectorAll(
+        "button"
+    );
+
+
+emojiButtons.forEach(
+    function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                const emoji =
+                    button.textContent;
+
+
+                messageInput.value +=
+                    emoji;
+
+
+                messageInput.focus();
+
+            }
+        );
+
+    }
+);
+
+
+// Close emoji panel
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            !emojiPanel.contains(
+                event.target
+            ) &&
+            event.target !== emojiBtn
+        ) {
+
+            emojiPanel.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+
+// ======================================================
 // LOGOUT
 // ======================================================
 
 logoutBtn.addEventListener(
     "click",
     function() {
+
+        const confirmLogout =
+            confirm(
+                "Leave ADDA 007?"
+            );
+
+
+        if (!confirmLogout) {
+
+            return;
+
+        }
+
 
         localStorage.removeItem(
             "adda007Username"
@@ -502,24 +731,19 @@ logoutBtn.addEventListener(
         username = null;
 
 
-        // Hide chat
-
         chatApp.style.display =
             "none";
 
-
-        // Show login
 
         loginScreen.style.display =
             "flex";
 
 
-        // Clear input
+        usernameInput.value =
+            "";
 
-        usernameInput.value = "";
-
-        messageInput.value = "";
-
+        messageInput.value =
+            "";
 
         usernameInput.focus();
 
@@ -528,14 +752,9 @@ logoutBtn.addEventListener(
 
 
 // ======================================================
-// FIREBASE CONNECTION TEST
+// DEBUG
 // ======================================================
 
 console.log(
-    "🔥 ADDA 007 Firebase initialized successfully!"
-);
-
-console.log(
-    "📡 Database:",
-    "adda007Messages"
+    "ADDA 007 initialized successfully."
 );
